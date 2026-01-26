@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿里云工单系统 - 售后服务</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C5A;
+            --secondary: #4ECDC4;
+            --secondary-light: #7EDDD6;
+            --accent: #FFE66D;
+            --bg-main: #FFF8F0;
+            --bg-card: #FFFFFF;
+            --text-dark: #2D3436;
+            --text-muted: #636E72;
+            --border: #E0E0E0;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --info: #74B9FF;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* 顶部导航 */
+        .navbar {
+            background: var(--bg-card);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-soft);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        .logo-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* 角色切换器 */
+        .role-switcher {
+            display: flex;
+            background: #F5F5F5;
+            border-radius: 50px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .role-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+
+        .role-btn.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .role-btn:hover:not(.active) {
+            color: var(--text-dark);
+        }
+
+        .role-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 主要内容区 */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        /* 欢迎区域 */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            color: white;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .welcome-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .welcome-mascot {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mascot-face {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .mascot-eye {
+            width: 12px;
+            height: 16px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            position: absolute;
+            top: 28px;
+            animation: blink 3s ease-in-out infinite;
+        }
+
+        .mascot-eye.left { left: 20px; }
+        .mascot-eye.right { right: 20px; }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        .mascot-mouth {
+            width: 20px;
+            height: 10px;
+            border: 3px solid var(--text-dark);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 产品卡片网格 */
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .product-card.selected {
+            border-color: var(--primary);
+            background: #FFF5F0;
+        }
+
+        .product-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .product-icon.ecs { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .product-icon.pai { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .product-icon.acs { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .product-icon.oss { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .product-icon.rds { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .product-icon.slb { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+
+        .product-card h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .product-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* 工单表单 */
+        .ticket-form-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .priority-selector {
+            display: flex;
+            gap: 12px;
+        }
+
+        .priority-option {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .priority-option:hover {
+            border-color: var(--text-muted);
+        }
+
+        .priority-option.selected {
+            border-color: var(--primary);
+            background: #FFF5F0;
+        }
+
+        .priority-option.low { --priority-color: var(--success); }
+        .priority-option.medium { --priority-color: var(--warning); }
+        .priority-option.high { --priority-color: var(--danger); }
+
+        .priority-option.selected {
+            border-color: var(--priority-color);
+            background: color-mix(in srgb, var(--priority-color) 10%, white);
+        }
+
+        .priority-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+        }
+
+        .priority-option.low .priority-dot { background: var(--success); }
+        .priority-option.medium .priority-dot { background: var(--warning); }
+        .priority-option.high .priority-dot { background: var(--danger); }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-main);
+            color: var(--text-dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 工单列表 */
+        .tickets-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .tickets-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .tickets-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            background: transparent;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .filter-btn:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .ticket-item {
+            background: var(--bg-main);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .ticket-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .ticket-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .ticket-id {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 14px;
+            color: var(--primary);
+            background: #FFF5F0;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .ticket-status {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ticket-status.pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .ticket-status.processing {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .ticket-status.resolved {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .ticket-status.closed {
+            background: #F5F5F5;
+            color: #757575;
+        }
+
+        .ticket-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .ticket-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .ticket-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ticket-meta svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* 工单详情弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-main);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--border);
+        }
+
+        .modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section h4 {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-section p {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* 消息列表 */
+        .messages-section {
+            background: var(--bg-main);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .message-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .message-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message-avatar.customer {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+
+        .message-avatar.engineer {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .message-text {
+            background: var(--bg-card);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* 回复输入框 */
+        .reply-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .reply-input {
+            display: flex;
+            gap: 12px;
+        }
+
+        .reply-input textarea {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            resize: none;
+            min-height: 80px;
+        }
+
+        .reply-input textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* 工程师专属样式 */
+        .engineer-view .welcome-section {
+            background: linear-gradient(135deg, var(--secondary), #3498db);
+        }
+
+        .engineer-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .stat-number {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-number.orange { color: var(--primary); }
+        .stat-number.blue { color: var(--info); }
+        .stat-number.green { color: var(--success); }
+        .stat-number.purple { color: #9B59B6; }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* 隐藏视图切换 */
+        .customer-view, .engineer-view {
+            display: none;
+        }
+
+        .customer-view.active, .engineer-view.active {
+            display: block;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            color: var(--border);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+        }
+
+        /* Toast通知 */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: var(--text-dark);
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-card);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 16px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .welcome-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .welcome-mascot {
+                margin-top: 20px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .engineer-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .priority-selector {
+                flex-direction: column;
+            }
+        }
+
+        /* 减少动画偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <div class="logo-text">阿里云<span>工单系统</span></div>
+        </div>
+        <div class="role-switcher">
+            <button class="role-btn active" data-role="customer" aria-label="切换到客户视角">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                客户
+            </button>
+            <button class="role-btn" data-role="engineer" aria-label="切换到工程师视角">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+                工程师
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 客户视图 -->
+        <div class="customer-view active" id="customerView">
+            <!-- 欢迎区域 -->
+            <section class="welcome-section">
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <h1>你好，欢迎回来！</h1>
+                        <p>有什么我们可以帮助您的吗？提交工单，我们的工程师将尽快为您服务。</p>
+                    </div>
+                    <div class="welcome-mascot">
+                        <div class="mascot-face">
+                            <div class="mascot-eye left"></div>
+                            <div class="mascot-eye right"></div>
+                            <div class="mascot-mouth"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 选择产品 -->
+            <h3 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                选择产品
+            </h3>
+            <div class="products-grid" id="productsGrid">
+                <div class="product-card" data-product="ECS">
+                    <div class="product-icon ecs">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/>
+                            <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h4>ECS</h4>
+                    <p>云服务器</p>
+                </div>
+                <div class="product-card" data-product="PAI">
+                    <div class="product-icon pai">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                        </svg>
+                    </div>
+                    <h4>PAI</h4>
+                    <p>机器学习平台</p>
+                </div>
+                <div class="product-card" data-product="ACS">
+                    <div class="product-icon acs">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <h4>ACS</h4>
+                    <p>容器计算服务</p>
+                </div>
+                <div class="product-card" data-product="OSS">
+                    <div class="product-icon oss">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h4>OSS</h4>
+                    <p>对象存储</p>
+                </div>
+                <div class="product-card" data-product="RDS">
+                    <div class="product-icon rds">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                        </svg>
+                    </div>
+                    <h4>RDS</h4>
+                    <p>云数据库</p>
+                </div>
+                <div class="product-card" data-product="SLB">
+                    <div class="product-icon slb">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h4>SLB</h4>
+                    <p>负载均衡</p>
+                </div>
+            </div>
+
+            <!-- 提交工单表单 -->
+            <div class="ticket-form-container" id="ticketForm">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/>
+                        <line x1="9" y1="15" x2="15" y2="15"/>
+                    </svg>
+                    提交新工单
+                </h3>
+                
+                <div class="form-group">
+                    <label for="ticketTitle">问题标题</label>
+                    <input type="text" id="ticketTitle" placeholder="简要描述您遇到的问题">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ticketDesc">问题描述</label>
+                    <textarea id="ticketDesc" placeholder="请详细描述您遇到的问题，包括错误信息、操作步骤等..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>优先级</label>
+                    <div class="priority-selector" id="prioritySelector">
+                        <div class="priority-option low selected" data-priority="low">
+                            <div class="priority-dot"></div>
+                            <span>低</span>
+                        </div>
+                        <div class="priority-option medium" data-priority="medium">
+                            <div class="priority-dot"></div>
+                            <span>中</span>
+                        </div>
+                        <div class="priority-option high" data-priority="high">
+                            <div class="priority-dot"></div>
+                            <span>高</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="submitTicketBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    提交工单
+                </button>
+            </div>
+
+            <!-- 我的工单列表 -->
+            <div class="tickets-container">
+                <div class="tickets-header">
+                    <h3 class="section-title" style="margin-bottom: 0;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        我的工单
+                    </h3>
+                    <div class="tickets-filter">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="pending">待处理</button>
+                        <button class="filter-btn" data-filter="processing">处理中</button>
+                        <button class="filter-btn" data-filter="resolved">已解决</button>
+                    </div>
+                </div>
+                <div class="tickets-list" id="customerTicketsList">
+                    <!-- 工单列表将由JS动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 工程师视图 -->
+        <div class="engineer-view" id="engineerView">
+            <!-- 欢迎区域 -->
+            <section class="welcome-section">
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <h1>工程师工作台</h1>
+                        <p>今天也要元气满满地解决问题哦！</p>
+                    </div>
+                    <div class="welcome-mascot">
+                        <div class="mascot-face">
+                            <div class="mascot-eye left"></div>
+                            <div class="mascot-eye right"></div>
+                            <div class="mascot-mouth"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 统计卡片 -->
+            <div class="engineer-stats" id="engineerStats">
+                <div class="stat-card">
+                    <div class="stat-number orange" id="statPending">3</div>
+                    <div class="stat-label">待处理</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number blue" id="statProcessing">5</div>
+                    <div class="stat-label">处理中</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number green" id="statResolved">12</div>
+                    <div class="stat-label">已解决</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number purple" id="statTotal">20</div>
+                    <div class="stat-label">总工单</div>
+                </div>
+            </div>
+
+            <!-- 工单列表 -->
+            <div class="tickets-container">
+                <div class="tickets-header">
+                    <h3 class="section-title" style="margin-bottom: 0;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        工单队列
+                    </h3>
+                    <div class="tickets-filter" id="engineerFilter">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="pending">待处理</button>
+                        <button class="filter-btn" data-filter="processing">处理中</button>
+                        <button class="filter-btn" data-filter="resolved">已解决</button>
+                    </div>
+                </div>
+                <div class="tickets-list" id="engineerTicketsList">
+                    <!-- 工单列表将由JS动态生成 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 工单详情弹窗 -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">工单详情</h2>
+                <button class="modal-close" id="closeModal" aria-label="关闭弹窗">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast通知 -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <script>
+        // 模拟数据
+        let tickets = [
+            {
+                id: 'TK20260112001',
+                product: 'ECS',
+                title: 'ECS实例无法通过SSH连接',
+                description: '我的ECS实例今天早上突然无法通过SSH连接，ping也不通。实例ID: i-bp1234567890abcdef，区域：华北2（北京）',
+                priority: 'high',
+                status: 'processing',
+                customer: '张三',
+                engineer: '李工',
+                createdAt: '2026-01-12 09:30',
+                messages: [
+                    { author: '张三', role: 'customer', content: '我的ECS实例今天早上突然无法通过SSH连接，ping也不通。', time: '09:30' },
+                    { author: '李工', role: 'engineer', content: '您好，我来帮您排查一下。请问您的安全组规则是否正确配置了22端口？', time: '09:45' },
+                    { author: '张三', role: 'customer', content: '刚检查了，22端口是开放的。', time: '09:50' }
+                ]
+            },
+            {
+                id: 'TK20260112002',
+                product: 'PAI',
+                title: 'PAI-Studio训练任务失败',
+                description: '提交的深度学习训练任务一直报OOM错误，已经尝试过减小batch size但是还是失败。',
+                priority: 'medium',
+                status: 'pending',
+                customer: '李四',
+                engineer: null,
+                createdAt: '2026-01-12 10:15',
+                messages: [
+                    { author: '李四', role: 'customer', content: '提交的深度学习训练任务一直报OOM错误，已经尝试过减小batch size但是还是失败。', time: '10:15' }
+                ]
+            },
+            {
+                id: 'TK20260111003',
+                product: 'ACS',
+                title: 'ACS集群节点状态异常',
+                description: '部分节点显示NotReady状态，导致Pod无法正常调度。',
+                priority: 'high',
+                status: 'resolved',
+                customer: '王五',
+                engineer: '赵工',
+                createdAt: '2026-01-11 14:20',
+                messages: [
+                    { author: '王五', role: 'customer', content: '部分节点显示NotReady状态，导致Pod无法正常调度。', time: '14:20' },
+                    { author: '赵工', role: 'engineer', content: '已排查，是kubelet服务异常，已重启恢复。', time: '15:00' },
+                    { author: '王五', role: 'customer', content: '已确认恢复正常，谢谢！', time: '15:10' }
+                ]
+            }
+        ];
+
+        let currentRole = 'customer';
+        let selectedProduct = null;
+        let selectedPriority = 'low';
+        let currentFilter = 'all';
+
+        // DOM元素
+        const customerView = document.getElementById('customerView');
+        const engineerView = document.getElementById('engineerView');
+        const roleBtns = document.querySelectorAll('.role-btn');
+        const productsGrid = document.getElementById('productsGrid');
+        const productCards = document.querySelectorAll('.product-card');
+        const priorityOptions = document.querySelectorAll('.priority-option');
+        const submitTicketBtn = document.getElementById('submitTicketBtn');
+        const ticketModal = document.getElementById('ticketModal');
+        const closeModal = document.getElementById('closeModal');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // 角色切换
+        roleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                roleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentRole = btn.dataset.role;
+                
+                if (currentRole === 'customer') {
+                    customerView.classList.add('active');
+                    engineerView.classList.remove('active');
+                } else {
+                    customerView.classList.remove('active');
+                    engineerView.classList.add('active');
+                    updateEngineerStats();
+                }
+                
+                renderTickets();
+            });
+        });
+
+        // 产品选择
+        productCards.forEach(card => {
+            card.addEventListener('click', () => {
+                productCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedProduct = card.dataset.product;
+            });
+        });
+
+        // 优先级选择
+        priorityOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                priorityOptions.forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedPriority = option.dataset.priority;
+            });
+        });
+
+        // 提交工单
+        submitTicketBtn.addEventListener('click', () => {
+            const title = document.getElementById('ticketTitle').value.trim();
+            const desc = document.getElementById('ticketDesc').value.trim();
+            
+            if (!selectedProduct) {
+                showToast('请先选择产品', false);
+                return;
+            }
+            if (!title) {
+                showToast('请输入问题标题', false);
+                return;
+            }
+            if (!desc) {
+                showToast('请输入问题描述', false);
+                return;
+            }
+            
+            const newTicket = {
+                id: 'TK' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + String(tickets.length + 1).padStart(3, '0'),
+                product: selectedProduct,
+                title: title,
+                description: desc,
+                priority: selectedPriority,
+                status: 'pending',
+                customer: '当前用户',
+                engineer: null,
+                createdAt: new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+                messages: [
+                    { author: '当前用户', role: 'customer', content: desc, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) }
+                ]
+            };
+            
+            tickets.unshift(newTicket);
+            
+            // 重置表单
+            document.getElementById('ticketTitle').value = '';
+            document.getElementById('ticketDesc').value = '';
+            productCards.forEach(c => c.classList.remove('selected'));
+            selectedProduct = null;
+            
+            showToast('工单提交成功！工程师将尽快处理', true);
+            renderTickets();
+        });
+
+        // 筛选按钮
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const container = e.target.closest('.tickets-filter');
+                container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderTickets();
+            });
+        });
+
+        // 渲染工单列表
+        function renderTickets() {
+            const listId = currentRole === 'customer' ? 'customerTicketsList' : 'engineerTicketsList';
+            const list = document.getElementById(listId);
+            
+            let filteredTickets = tickets;
+            if (currentFilter !== 'all') {
+                filteredTickets = tickets.filter(t => t.status === currentFilter);
+            }
+            
+            if (filteredTickets.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <h3>暂无工单</h3>
+                        <p>${currentRole === 'customer' ? '您还没有提交过工单' : '当前没有符合条件的工单'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = filteredTickets.map(ticket => `
+                <div class="ticket-item" onclick="openTicketDetail('${ticket.id}')">
+                    <div class="ticket-item-header">
+                        <span class="ticket-id">${ticket.id}</span>
+                        <span class="ticket-status ${ticket.status}">${getStatusText(ticket.status)}</span>
+                    </div>
+                    <div class="ticket-title">${ticket.title}</div>
+                    <div class="ticket-meta">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                            </svg>
+                            ${ticket.product}
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            ${ticket.createdAt}
+                        </span>
+                        ${ticket.engineer ? `<span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            ${ticket.engineer}
+                        </span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const map = {
+                pending: '待处理',
+                processing: '处理中',
+                resolved: '已解决',
+                closed: '已关闭'
+            };
+            return map[status] || status;
+        }
+
+        // 打开工单详情
+        function openTicketDetail(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            const modalBody = document.getElementById('modalBody');
+            const isEngineer = currentRole === 'engineer';
+            
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <span class="ticket-id">${ticket.id}</span>
+                        <span class="ticket-status ${ticket.status}">${getStatusText(ticket.status)}</span>
+                    </div>
+                    <h3 style="font-size: 20px; margin-bottom: 8px;">${ticket.title}</h3>
+                    <div class="ticket-meta">
+                        <span>产品：${ticket.product}</span>
+                        <span>优先级：${ticket.priority === 'high' ? '高' : ticket.priority === 'medium' ? '中' : '低'}</span>
+                        <span>提交时间：${ticket.createdAt}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>问题描述</h4>
+                    <p>${ticket.description}</p>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>沟通记录</h4>
+                    <div class="messages-section">
+                        ${ticket.messages.map(msg => `
+                            <div class="message-item">
+                                <div class="message-avatar ${msg.role}">${msg.author.charAt(0)}</div>
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="message-author">${msg.author}</span>
+                                        <span class="message-time">${msg.time}</span>
+                                    </div>
+                                    <div class="message-text">${msg.content}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="reply-section">
+                    <div class="reply-input">
+                        <textarea id="replyText" placeholder="输入回复内容..."></textarea>
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 12px; justify-content: flex-end;">
+                        ${isEngineer && ticket.status === 'pending' ? `
+                            <button class="btn btn-secondary" onclick="acceptTicket('${ticket.id}')">
+                                接单处理
+                            </button>
+                        ` : ''}
+                        ${isEngineer && ticket.status === 'processing' ? `
+                            <button class="btn btn-secondary" onclick="resolveTicket('${ticket.id}')">
+                                标记已解决
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-primary" onclick="sendReply('${ticket.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                            发送回复
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            ticketModal.classList.add('active');
+        }
+
+        // 发送回复
+        function sendReply(ticketId) {
+            const replyText = document.getElementById('replyText').value.trim();
+            if (!replyText) {
+                showToast('请输入回复内容', false);
+                return;
+            }
+            
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            ticket.messages.push({
+                author: currentRole === 'customer' ? '当前用户' : '工程师',
+                role: currentRole,
+                content: replyText,
+                time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+            });
+            
+            showToast('回复发送成功', true);
+            openTicketDetail(ticketId);
+        }
+
+        // 接单处理
+        function acceptTicket(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            ticket.status = 'processing';
+            ticket.engineer = '当前工程师';
+            
+            showToast('已接单，开始处理', true);
+            updateEngineerStats();
+            openTicketDetail(ticketId);
+            renderTickets();
+        }
+
+        // 标记已解决
+        function resolveTicket(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            ticket.status = 'resolved';
+            
+            showToast('工单已标记为已解决', true);
+            updateEngineerStats();
+            openTicketDetail(ticketId);
+            renderTickets();
+        }
+
+        // 更新工程师统计
+        function updateEngineerStats() {
+            document.getElementById('statPending').textContent = tickets.filter(t => t.status === 'pending').length;
+            document.getElementById('statProcessing').textContent = tickets.filter(t => t.status === 'processing').length;
+            document.getElementById('statResolved').textContent = tickets.filter(t => t.status === 'resolved').length;
+            document.getElementById('statTotal').textContent = tickets.length;
+        }
+
+        // 关闭弹窗
+        closeModal.addEventListener('click', () => {
+            ticketModal.classList.remove('active');
+        });
+
+        ticketModal.addEventListener('click', (e) => {
+            if (e.target === ticketModal) {
+                ticketModal.classList.remove('active');
+            }
+        });
+
+        // 显示Toast
+        function showToast(message, success = true) {
+            toastMessage.textContent = message;
+            toast.classList.toggle('success', success);
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 初始化
+        renderTickets();
+    </script>
+</body>
+</html>
